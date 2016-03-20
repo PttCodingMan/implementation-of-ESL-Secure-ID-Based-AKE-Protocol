@@ -2,10 +2,11 @@
 
 import java.security.SecureRandom;
 
+import org.apache.commons.codec.binary.Hex;
+
 import uk.ac.ic.doc.jpair.api.FieldElement;
 import uk.ac.ic.doc.jpair.api.Pairing;
 import uk.ac.ic.doc.jpair.pairing.BigInt;
-import uk.ac.ic.doc.jpair.pairing.PairingFactory;
 import uk.ac.ic.doc.jpair.pairing.Point;
 import uk.ac.ic.doc.jpair.pairing.Predefined;
 
@@ -96,8 +97,8 @@ public class PairingDemo {
 		FieldElement two=publicParams.getE().compute(publicParams.getPpub(),hw_QID2);
 		FieldElement oneAndTwo = publicParams.getE().getGt().multiply(one,two);
 		
-		System.out.println(ePV.toString());
-		System.out.println(oneAndTwo.toString());
+		System.out.println(new String(Hex.encodeHex(ePV.toByteArray())));
+		System.out.println(new String(Hex.encodeHex(oneAndTwo.toByteArray())));
 		if(ePV.equals(oneAndTwo)){
 			System.out.println("Server pairing verify pass!");
 			BigInt N=getRandomNumber(publicParams.getE());
