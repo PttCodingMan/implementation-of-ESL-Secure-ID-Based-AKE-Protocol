@@ -27,9 +27,9 @@ public class PairingDemo {
 		Point P=e.RandomPointInG1(new SecureRandom());//randomly choose generator P
 		Point Ppub = e.getCurve().multiply(P, ServerPrivateKey);//compute Ppub = P * s
 		publicParams=new PublicParams(e,P,Ppub);//store public params
-		System.out.println("complete.");
+		System.out.println("Server init complete.");
 		
-		//Server extrat key
+		//Extract key
 		BigInt DID1;
 		Point DID2;
 		Point QID1;
@@ -41,6 +41,8 @@ public class PairingDemo {
 		DID2=publicParams.getE().getCurve().multiply(QID2, ServerPrivateKey);
 		ClientPrivateKey ClientPrivateKey = new ClientPrivateKey(DID1, DID2, QID1);		
 		
+		System.out.println("Client extract key complete.");
+		
 		//Client pre-compute phase
 		PreComputation PreComputation = new PreComputation(ID);
 		BigInt r=getRandomNumber(publicParams.getE());
@@ -50,6 +52,8 @@ public class PairingDemo {
 		Point tempV=publicParams.getE().getCurve2().multiply(W, r.add(ClientPrivateKey.getDID1()));
 		Point V=publicParams.getE().getCurve2().add(tempV, ClientPrivateKey.getDID2());
 		PreComputation.setParams(U1, U2, V, ClientPrivateKey.getQID1(),r);
+		
+		System.out.println("Client precompute phase complete.");
 		
 		ClientData = new ClientData(ID, ClientPrivateKey);
 		ClientData.setOffLineParams(ID);
@@ -70,7 +74,7 @@ public class PairingDemo {
 		AuthC=PublicParams.f3(PreComputation.getID(),PreComputation.getU1(),PreComputation.getU2(),PreComputation.getV(), onLineMsg.getN(), Kc, onLineMsg.getAuthS());
 		BigInt ClientSessionKey=PublicParams.f4(PreComputation.getID(),PreComputation.getU1(),PreComputation.getU2(),PreComputation.getV(), onLineMsg.getN(), Kc, onLineMsg.getAuthS(), AuthC);
 		
-		System.out.println("Client session key result: " + ClientSessionKey);
+		System.out.println("Client session key result: " + new String(Hex.encodeHex(ClientSessionKey.toByteArray())));
 		
 		BigInt AuthCtemp=PublicParams.f3(PreComputation.getID(),PreComputation.getU1(),PreComputation.getU2(),PreComputation.getV(), ClientData.getN(), ClientData.getKs(), ClientData.getAuthS());
 		if(!AuthC.equals(AuthCtemp)){
@@ -80,7 +84,7 @@ public class PairingDemo {
 		
 		System.out.println("Client to Server authentication pass!");
 		BigInt ServerSessionKey=PublicParams.f4(PreComputation.getID(),PreComputation.getU1(),PreComputation.getU2(),PreComputation.getV(), ClientData.getN(), ClientData.getKs(), ClientData.getAuthS(), AuthC);
-		System.out.println("Server session key result: " + ServerSessionKey);
+		System.out.println("Server session key result: " + new String(Hex.encodeHex(ServerSessionKey.toByteArray())));
 		
 	}
 	public MAKE_1 MAKE_1(PreComputation inputPreComputation){//the first part of MAKE
@@ -108,7 +112,7 @@ public class PairingDemo {
 			MAKE_1 temp=new MAKE_1(N,AuthS);
 			return temp;
 		}
-		System.out.println("Pairing verify fail!");
+		System.out.println("Server pairing verify fail!");
 		return null;
 	}
 	private BigInt getRandomNumber(Pairing e){//get a random number
