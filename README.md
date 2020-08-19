@@ -4,4 +4,4 @@ It's the implementation of Ephemeral-Secret-Leakage Secure ID-Based Authenticate
 
 Using Jpair library.
 
-Full paper: http://www.hindawi.com/journals/ijdsn/2015/898716/
+Full paper: https://journals.sagepub.com/doi/full/10.1155/2015/898716
